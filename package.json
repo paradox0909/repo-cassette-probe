@@ -1,0 +1,2 @@
+{ "name": "repo-cassette-probe", "private": true, "type": "module",
+  "dependencies": { "@actions/artifact": "2.1.11" } }
