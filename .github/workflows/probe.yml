@@ -12,6 +12,6 @@ jobs:
         with:
           node-version: '20'
       - run: npm install --ignore-scripts
-      - run: node probe.mjs
+      - uses: ./probe-action
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,5 @@
+name: 'cassette probe'
+description: 'probe artifact download content types'
+runs:
+  using: 'node20'
+  main: 'index.mjs'
