@@ -2,9 +2,9 @@
 import https from 'node:https';
 import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
-import { internalArtifactTwirpClient } from '@actions/artifact/lib/internal/shared/artifact-twirp-client.js';
-import { getBackendIdsFromToken } from '@actions/artifact/lib/internal/shared/util.js';
-import { StringValue, CreateArtifactRequest, CreateArtifactResponse } from '@actions/artifact/lib/generated/index.js';
+import { internalArtifactTwirpClient } from '../node_modules/@actions/artifact/lib/internal/shared/artifact-twirp-client.js';
+import { getBackendIdsFromToken } from '../node_modules/@actions/artifact/lib/internal/shared/util.js';
+import { StringValue, CreateArtifactRequest, CreateArtifactResponse } from '../node_modules/@actions/artifact/lib/generated/index.js';
 
 const ids   = getBackendIdsFromToken();
 const twirp = internalArtifactTwirpClient({ maxAttempts: 1 });
@@ -140,7 +140,9 @@ for (const fn of [caseJsonMime, caseNoMime, caseProtoNel, caseGzip]) {
 }
 // and the one GitHub storage URL measured to carry no rsct
 try {
-  const api = await req(`https://api.github.com/repos/${REPO}/actions/runs/${RUN}/logs`, {
+  const done = JSON.parse((await req(`https://api.github.com/repos/${REPO}/actions/runs?status=completed&per_page=1`, { headers: { accept: 'application/vnd.github.v3+json', authorization: `Bearer ${TOKEN}`, 'user-agent': 'probe' } })).body.toString());
+  const prior = done.workflow_runs?.[0]?.id ?? RUN;
+  const api = await req(`https://api.github.com/repos/${REPO}/actions/runs/${prior}/logs`, {
     headers: { accept: 'application/vnd.github.v3+json', authorization: `Bearer ${TOKEN}`, 'user-agent': 'probe' } });
   const loc = api.headers.location;
   const out = { case: 'E run-logs', apiStatus: api.status };
